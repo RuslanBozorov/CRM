@@ -11,9 +11,16 @@ async function bootstrap() {
     }),
   );
   app.setGlobalPrefix('api/v1');
-  const config = new DocumentBuilder().setTitle('CRM_COURSE').addBearerAuth().build();
+  const config = new DocumentBuilder()
+    .setTitle('CRM_COURSE')
+    .addBearerAuth()
+    .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, documentFactory);
+  SwaggerModule.setup('swagger', app, documentFactory, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

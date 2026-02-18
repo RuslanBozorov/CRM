@@ -9,16 +9,15 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async getAllUsers() {
-    return this.prisma.user.findMany({where:{status:Status.active,role:Role.ADMIN}});
+    return this.prisma.user.findMany({ where: { status: Status.active, role: Role.ADMIN } });
   }
 
-
-  async oneUser(id){
-    const findId = this.prisma.user.findUnique({where:{id:Number(id)}})
-    if(!findId){
-      throw new NotFoundException()
+  async oneUser(id) {
+    const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
+    if (!findId) {
+      throw new NotFoundException();
     }
-    return this.prisma.user.findUnique({where:{id:Number(id)}})
+    return this.prisma.user.findUnique({ where: { id: Number(id) } });
   }
 
   async createAdmin(payload: CreateAdminDto) {
@@ -46,30 +45,27 @@ export class UsersService {
     };
   }
 
-  async updateUser(id,payload : UpdateAdminDto){
-    const findId = this.prisma.user.findUnique({where:{id:Number(id)}})
-    if(!findId){
-      throw new NotFoundException()
+  async updateUser(id, payload: UpdateAdminDto) {
+    const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
+    if (!findId) {
+      throw new NotFoundException();
     }
-    await this.prisma.user.update({where:{id:Number(id)},data:payload})
-    return{
-      success:true,
-      message:"User updated"
-    }
-
-    
+    await this.prisma.user.update({ where: { id: Number(id) }, data: payload });
+    return {
+      success: true,
+      message: 'User updated',
+    };
   }
 
-
-  async deleteUser(id){
-    const findId = this.prisma.user.findUnique({where:{id:Number(id)}})
-    if(!findId){
-      throw new NotFoundException()
+  async deleteUser(id) {
+    const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
+    if (!findId) {
+      throw new NotFoundException();
     }
-    await this.prisma.user.delete({where:{id}})
-    return{
-      success:true,
-      message:"User delete"
-    }
+    await this.prisma.user.delete({ where: { id } });
+    return {
+      success: true,
+      message: 'User delete',
+    };
   }
 }

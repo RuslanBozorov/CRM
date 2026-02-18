@@ -5,8 +5,13 @@ import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly AuthService: AuthService) {}
-  @Post()
-  Login(@Body() payload: LoginDto) {
-    return this.AuthService.Login(payload);
+  @Post('user/login')
+  userLogin(@Body() payload: LoginDto) {
+    return this.AuthService.userLogin(payload);
+  }
+
+  @Post('teacher/login')
+  teacherLogin(@Body() payload: LoginDto) {
+    return this.AuthService.teacherLogin(payload);
   }
 }

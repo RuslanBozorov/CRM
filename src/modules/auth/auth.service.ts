@@ -3,6 +3,7 @@ import { PrismaService } from 'src/core/database/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '@prisma/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -10,7 +11,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async Login(payload: LoginDto) {
+  async userLogin(payload: LoginDto) {
     const existUser = await this.prisma.user.findUnique({
       where: { phone: payload.phone },
     });
@@ -32,6 +33,32 @@ export class AuthService {
         id: existUser.id,
         email: existUser.email,
         role: existUser.role,
+      }),
+    };
+  }
+
+  async teacherLogin(payload: LoginDto) {
+    const existUser = await this.prisma.teacher.findUnique({
+      where: { phone: payload.phone },
+    });
+
+    if (!existUser) {
+      throw new UnauthorizedException('Invalid phone or password');
+    }
+
+    const isMatch = await bcrypt.compare(payload.password, existUser.password);
+
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid phone or password');
+    }
+
+    return {
+      success: true,
+      message: 'Login successfuled',
+      accessToken: this.jwtService.sign({
+        id: existUser.id,
+        email: existUser.email,
+        role: Role.TEACHER,
       }),
     };
   }
