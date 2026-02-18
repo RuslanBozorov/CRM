@@ -5,7 +5,7 @@ import { PrismaModule } from 'src/core/database/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [AuthModule],
   controllers: [UsersController],
   providers: [UsersService],
 })

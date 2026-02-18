@@ -37,6 +37,26 @@ export class StudentsController {
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get('all')
+  getAllStudent() {
+    return this.studentService.getAllStudets();
+  }
+
+  @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get('one/:id')
+  getOneStudent(@Param('id', ParseIntPipe) id: number) {
+    return this.studentService.getOneStudent(id);
+  }
+
+  @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -73,62 +93,39 @@ export class StudentsController {
       },
     }),
   )
-
- 
   @ApiOperation({
-    summary:`${Role.SUPERADMIN} ${Role.ADMIN}`
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
-   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
-  @Post("student/create")
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Post('create')
   createStudent(
     @Body() payload: CreateStudentDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.studentService.createStudent(payload, file.filename);
-  }
-
-
-   @ApiOperation({
-    summary:`${Role.SUPERADMIN} ${Role.ADMIN}`
-  })
-   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
-  @Get("student/all")
-  getAllStudent(){
-    return this.studentService.getAllStudets()
+    return this.studentService.createStudent(payload, file?.filename ?? '');
   }
 
   @ApiOperation({
-    summary:`${Role.SUPERADMIN} ${Role.ADMIN}`
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
-   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
-  @Get("student/one/:id")
-  getOneStudent(@Param("id",ParseIntPipe) id : number){
-    return this.studentService.getOneStudent(id)
-  }
-
-
-
-
-  @ApiOperation({
-    summary:`${Role.SUPERADMIN} ${Role.ADMIN}`
-  })
-   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
-  @Put("student/update/:id")
-  updateStudent(@Param("id",ParseIntPipe) id : number, @Body() payload : UpdateStudentDto){
-    return this.studentService.updateStudent(id,payload)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Put('update/:id')
+  updateStudent(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateStudentDto,
+  ) {
+    return this.studentService.updateStudent(id, payload);
   }
 
   @ApiOperation({
-    summary:`${Role.SUPERADMIN} ${Role.ADMIN}`
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
-   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
-  @Delete("student/delete/:id")
-  deleteStudent(@Param("id",ParseIntPipe) id : number){
-    return this.studentService.deleteStudent(id)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Delete('delete/:id')
+  deleteStudent(@Param('id', ParseIntPipe) id: number) {
+    return this.studentService.deleteStudent(id);
   }
 }

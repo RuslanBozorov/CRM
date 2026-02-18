@@ -8,6 +8,8 @@ import { StudentsModule } from './modules/students/students.module';
 import { TeachersModule } from './modules/teachers/teachers.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { RoomsModule } from './modules/rooms/rooms.module';
+import { CoursesModule } from './modules/courses/courses.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -17,10 +19,12 @@ import { join } from 'path';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
-    GroupsModule,
     UsersModule,
     StudentsModule,
     TeachersModule,
+    RoomsModule,
+    CoursesModule,
+    GroupsModule,
   ],
 })
 export class AppModule {}

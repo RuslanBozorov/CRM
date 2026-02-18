@@ -34,7 +34,7 @@ export class UsersController {
     summary: `${Role.SUPERADMIN}  ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get('oneUser/:id')
   oneUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.oneUser(id);
@@ -42,8 +42,8 @@ export class UsersController {
   @ApiOperation({
     summary: `${Role.SUPERADMIN}  ${Role.ADMIN}`,
   })
- @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Post('admin')
   createAdmin(@Body() payload: CreateAdminDto) {
     return this.userService.createAdmin(payload);
@@ -53,7 +53,7 @@ export class UsersController {
     summary: `${Role.SUPERADMIN}  ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Put('update/:id')
   updateUser(@Param('id', ParseIntPipe) id: number, @Body() payload: UpdateAdminDto) {
     return this.userService.updateUser(id, payload);
@@ -63,7 +63,7 @@ export class UsersController {
     summary: `${Role.SUPERADMIN}  ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN,Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Delete('delete/:id')
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.deleteUser(id);

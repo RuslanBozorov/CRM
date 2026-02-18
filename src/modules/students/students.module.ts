@@ -3,9 +3,10 @@ import { StudentsController } from './students.controller';
 import { StudentsService } from './students.service';
 import { PrismaModule } from 'src/core/database/prisma.module';
 import { AuthModule } from '../auth/auth.module';
+import { EmailModule } from 'src/common/email/email.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [AuthModule, EmailModule],
   controllers: [StudentsController],
   providers: [StudentsService],
 })

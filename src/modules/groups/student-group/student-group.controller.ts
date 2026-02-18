@@ -7,33 +7,29 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
-import { GroupsService } from './groups.service';
-import { CreateGroupDto } from './dto/create.dto';
-import { UpdateGroupDto } from './dto/update.dto';
+import { StudentGroupService } from './student-group.service';
+import { CreateStudentGroupDto } from './dto/create.dto';
+import { UpdateStudentGroupDto } from './dto/update.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Roles } from 'src/common/decorators/role';
 import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/role.guard';
-import { filterDto } from './dto/search.dto';
 @ApiBearerAuth()
-@Controller('groups')
-export class GroupsController {
-  constructor(private readonly groupService: GroupsService) {}
+@Controller('student-group')
+export class StudentGroupController {
+  constructor(private readonly studentGroupService: StudentGroupService) {}
+
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get('all')
-
-  getAllGroups(
-    @Query() query: filterDto
-  ) {
-    return this.groupService.getAllGroups(query);
+  getAllStudentGroup() {
+    return this.studentGroupService.getAllStudentGroup();
   }
 
   @ApiOperation({
@@ -42,18 +38,8 @@ export class GroupsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get('one/:id')
-  getOneGroup(@Param('id', ParseIntPipe) id: number) {
-    return this.groupService.getOneGroup(id);
-  }
-
-  @ApiOperation({
-    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
-  })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN, Role.ADMIN)
-  @Get('one/students/:groupId')
-  getGroupOne(@Param('groupId', ParseIntPipe) groupId: number) {
-    return this.groupService.getGroupOne(groupId);
+  getOneStudentGroup(@Param('id', ParseIntPipe) id: number) {
+    return this.studentGroupService.getOneStudentGroup(id);
   }
 
   @ApiOperation({
@@ -62,8 +48,8 @@ export class GroupsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Post()
-  createGroup(@Body() payload: CreateGroupDto) {
-    return this.groupService.createGroup(payload);
+  createStudentGroup(@Body() payload: CreateStudentGroupDto) {
+    return this.studentGroupService.createStudentGroup(payload);
   }
 
   @ApiOperation({
@@ -72,11 +58,11 @@ export class GroupsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Put('update/:id')
-  updateGroup(
+  updateStudentGroup(
     @Param('id', ParseIntPipe) id: number,
-    @Body() payload: UpdateGroupDto,
+    @Body() payload: UpdateStudentGroupDto,
   ) {
-    return this.groupService.updateGroup(id, payload);
+    return this.studentGroupService.updateStudentGroup(id, payload);
   }
 
   @ApiOperation({
@@ -85,7 +71,7 @@ export class GroupsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Delete('delete/:id')
-  deleteGroup(@Param('id', ParseIntPipe) id: number) {
-    return this.groupService.deleteGroup(id);
+  deleteStudentGroup(@Param('id', ParseIntPipe) id: number) {
+    return this.studentGroupService.deleteStudentGroup(id);
   }
 }

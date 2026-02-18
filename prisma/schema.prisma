@@ -112,6 +112,7 @@ model Course {
 model Room {
   id         Int      @id @default(autoincrement())
   name       String   @unique
+  status     Status   @default(active)
   created_at DateTime @default(now())
   update_at  DateTime @default(now())
   groups     Group[]
@@ -124,8 +125,8 @@ model Group {
   course_id   Int
   teacher_id  Int
   room_id     Int
-  start_date  DateTime
-  week_day    Json
+  start_date  String
+  week_day    WeekDay[]
   start_time  String
   max_student Int
   status      GroupStatus @default(active)
@@ -148,4 +149,6 @@ model StudentGroup {
 
   students Student @relation(fields: [student_id], references: [id])
   groups   Group   @relation(fields: [group_id], references: [id])
+
+  @@unique([student_id,group_id])
 }
