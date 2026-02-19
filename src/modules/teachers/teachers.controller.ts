@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -31,6 +32,7 @@ import { UpdateTeacherDto } from './dto/update.teacher.dto';
 @Controller('teachers')
 export class TeachersController {
   constructor(private readonly teacherService: TeachersService) {}
+
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
@@ -50,11 +52,33 @@ export class TeachersController {
   getOneStudent(@Param('id', ParseIntPipe) id: number) {
     return this.teacherService.getOneTeacher(id);
   }
+
+   @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get("delete-arxiv")
+  getDeleteArxiv(){
+    return this.teacherService.getDeleteArxiv()
+  }
+
+  @ApiOperation({
+    summary: `${Role.TEACHER} ${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.TEACHER, Role.SUPERADMIN, Role.ADMIN)
+  @Get('my-groups')
+  getMyGroups(@Req() req: any) {
+    return this.teacherService.getMyGroups(req.user);
+  }
+
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Post()
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -81,7 +105,6 @@ export class TeachersController {
       }),
     }),
   )
-  @Post()
   createStudent(
     @Body() payload: CreateTeacherDto,
     @UploadedFile() file: Express.Multer.File,

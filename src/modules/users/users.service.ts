@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreateAdminDto } from './dto/create.admin.dto';
 import * as bcrypt from 'bcrypt';
@@ -12,13 +12,27 @@ export class UsersService {
     return this.prisma.user.findMany({ where: { status: Status.active, role: Role.ADMIN } });
   }
 
-  async oneUser(id) {
+  async oneUser(id : number) {
     const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
     if (!findId) {
-      throw new NotFoundException("User Not found");
+      throw new NotFoundException('User Not found');
     }
     return this.prisma.user.findUnique({ where: { id: Number(id) } });
   }
+
+   async getDeleteArxiv(){
+        const data = await this.prisma.user.findMany({
+          where:{
+            status:Status.inactive
+          }
+        })
+        return{
+          success:true,
+          message:"Deleted groups arxiv",
+          data:data
+        }
+      }
+  
 
   async createAdmin(payload: CreateAdminDto) {
     const adminExists = await this.prisma.user.findFirst({
@@ -58,12 +72,19 @@ export class UsersService {
     };
   }
 
-  async deleteUser(id) {
-    const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
+  async deleteUser(id : number) {
+    const findId = await this.prisma.user.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();
     }
-    const data = await this.prisma.user.delete({ where: { id } });
+
+    if(findId.status === Status.inactive){
+      throw new BadRequestException("User already deleted")
+    }
+    const data = await this.prisma.user.update({
+       where: { id:Number(id) },
+       data:{status:Status.inactive}
+       });
     return {
       success: true,
       message: 'User delete',

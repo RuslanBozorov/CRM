@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -6,6 +7,7 @@ import {
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreateCourseDto } from './dto/create.dto';
 import { UpdateCourseDto } from './dto/update.dto';
+import { Status } from '@prisma/client';
 
 @Injectable()
 export class CoursesService {
@@ -49,6 +51,19 @@ export class CoursesService {
     };
   }
 
+  async getDeleteArxiv(){
+    const data = await this.prisma.course.findMany({
+      where:{
+        status:Status.inactive
+      }
+    })
+    return{
+      success:true,
+      message:"Deleted courses arxiv",
+      data:data
+    }
+  }
+
   async updateCourse(id, payload: UpdateCourseDto) {
     const findId = this.prisma.course.findUnique({ where: { id: Number(id) } });
     if (!findId) {
@@ -65,14 +80,23 @@ export class CoursesService {
     };
   }
 
-  async deleteCourse(id) {
-    const findId = this.prisma.course.findUnique({ where: { id: Number(id) } });
-    if (!findId) {
-      throw new NotFoundException();
-    }
-    return {
-      success: true,
-      message: 'Course delete',
-    };
+  async deleteCourse(id : number) {
+    const findId = await this.prisma.course.findUnique({ where: { id: Number(id) } });
+           if (!findId) {
+             throw new NotFoundException();
+           }
+       
+           if(findId.status === Status.inactive){
+             throw new BadRequestException("User already deleted")
+           }
+           const data = await this.prisma.course.update({
+              where: { id:Number(id) },
+              data:{status:Status.inactive}
+              });
+           return {
+             success: true,
+             message: 'Course delete',
+             data,
+           };
   }
 }

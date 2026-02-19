@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -39,7 +40,7 @@ export class RoomsService {
     };
   }
 
-  async getOneRoom(id) {
+  async getOneRoom(id : number) {
     const findId = await this.prisma.room.findUnique({ where: { id } });
     if (!findId) throw new NotFoundException();
     return {
@@ -49,7 +50,20 @@ export class RoomsService {
     };
   }
 
-  async updateRoom(id, payload: UpdateRoomDto) {
+  async getDeleteArxiv(){
+      const data = await this.prisma.room.findMany({
+        where:{
+          status:Status.inactive
+        }
+      })
+      return{
+        success:true,
+        message:"Deleted groups arxiv",
+        data:data
+      }
+    }
+
+  async updateRoom(id:number, payload: UpdateRoomDto) {
     const findId = this.prisma.room.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();
@@ -65,16 +79,23 @@ export class RoomsService {
     };
   }
 
-  async deleteRoom(id) {
-    const findId = this.prisma.room.findUnique({ where: { id: Number(id) } });
-    if (!findId) {
-      throw new NotFoundException();
-    }
-    const data = await this.prisma.room.delete({ where: { id } });
-    return {
-      success: true,
-      message: 'Room delete',
-      data,
-    };
+  async deleteRoom(id : number) {
+    const findId = await this.prisma.room.findUnique({ where: { id: Number(id) } });
+        if (!findId) {
+          throw new NotFoundException();
+        }
+    
+        if(findId.status === Status.inactive){
+          throw new BadRequestException("Room already deleted")
+        }
+        const data = await this.prisma.user.update({
+           where: { id:Number(id) },
+           data:{status:Status.inactive}
+           });
+        return {
+          success: true,
+          message: 'Room delete',
+          data,
+        };
   }
 }

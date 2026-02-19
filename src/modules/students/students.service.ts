@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -8,6 +9,7 @@ import { PrismaService } from 'src/core/database/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { UpdateStudentDto } from './dto/update.student.dto';
 import { EmailService } from 'src/common/email/email.service';
+import { Status, StudentStatus } from '@prisma/client';
 @Injectable()
 export class StudentsService {
   constructor(
@@ -60,7 +62,7 @@ export class StudentsService {
     };
   }
 
-  async getOneStudent(id) {
+  async getOneStudent(id : number) {
     const existStudent = await this.prisma.student.findUnique({
       where: { id: Number(id) },
     });
@@ -73,7 +75,22 @@ export class StudentsService {
     };
   }
 
-  async updateStudent(id, payload: UpdateStudentDto) {
+
+   async getDeleteArxiv(){
+      const data = await this.prisma.student.findMany({
+        where:{
+          status:StudentStatus.inactive
+        }
+      })
+      return{
+        success:true,
+        message:"Deleted groups arxiv",
+        data:data
+      }
+    }
+
+
+  async updateStudent(id : number, payload: UpdateStudentDto) {
     const findId = this.prisma.student.findUnique({
       where: { id: Number(id) },
     });
@@ -91,16 +108,23 @@ export class StudentsService {
     };
   }
 
-  async deleteStudent(id) {
-    const findId = this.prisma.student.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!findId) {
-      throw new NotFoundException();
-    }
-    return {
-      success: true,
-      message: 'Student delete',
-    };
+  async deleteStudent(id : number) {
+    const findId = await this.prisma.student.findUnique({ where: { id: Number(id) } });
+        if (!findId) {
+          throw new NotFoundException();
+        }
+    
+        if(findId.status === Status.inactive){
+          throw new BadRequestException("User already deleted")
+        }
+        const data = await this.prisma.student.update({
+           where: { id:Number(id) },
+           data:{status:StudentStatus.inactive}
+           });
+        return {
+          success: true,
+          message: 'Student delete',
+          data,
+        };
   }
 }

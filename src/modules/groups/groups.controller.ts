@@ -29,10 +29,7 @@ export class GroupsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get('all')
-
-  getAllGroups(
-    @Query() query: filterDto
-  ) {
+  getAllGroups(@Query() query: filterDto) {
     return this.groupService.getAllGroups(query);
   }
 
@@ -54,6 +51,16 @@ export class GroupsController {
   @Get('one/students/:groupId')
   getGroupOne(@Param('groupId', ParseIntPipe) groupId: number) {
     return this.groupService.getGroupOne(groupId);
+  }
+
+   @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get("delete-arxiv")
+  getDeleteArxiv(){
+    return this.groupService.getDeleteArxiv()
   }
 
   @ApiOperation({

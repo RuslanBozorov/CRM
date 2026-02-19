@@ -42,6 +42,17 @@ export class StudentGroupController {
     return this.studentGroupService.getOneStudentGroup(id);
   }
 
+
+   @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get("delete-arxiv")
+  getDeleteArxiv(){
+    return this.studentGroupService.getDeleteArxiv()
+  }
+
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })

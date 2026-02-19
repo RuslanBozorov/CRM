@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { GroupStatus, Role, Status } from '@prisma/client';
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreateTeacherDto } from './dto/create.teacher';
 import * as bcrypt from 'bcrypt';
@@ -56,17 +58,75 @@ export class TeachersService {
     };
   }
 
-  async getOneTeacher(id) {
-    const existStudent = await this.prisma.teacher.findUnique(id);
+  async getOneTeacher(id : number) {
+    const existStudent = await this.prisma.teacher.findUnique({where:{id:Number(id)}});
     if (!existStudent) throw new NotFoundException();
-    await this.prisma.teacher.findUnique(id);
+    await this.prisma.teacher.findUnique({where:{id:Number(id)}});
     return {
       success: true,
       message: 'Get one Teacher',
     };
   }
 
-  async updateTeacher(id, payload: UpdateTeacherDto) {
+  async getDeleteArxiv(){
+        const data = await this.prisma.teacher.findMany({
+          where:{
+            status:Status.inactive
+          }
+        })
+        return{
+          success:true,
+          message:"Deleted groups arxiv",
+          data:data
+        }
+      }
+
+  async getMyGroups(user: { id: number; role: Role }) {
+    const where: any = {
+      status: GroupStatus.active,
+    };
+
+    if (user.role === Role.TEACHER) {
+      const teacher = await this.prisma.teacher.findFirst({
+        where: { id: user.id, status: Status.active },
+        select: { id: true },
+      });
+
+      if (!teacher) throw new NotFoundException('Teacher not found');
+
+      where.teacher_id = user.id;
+    }
+
+    const groups = await this.prisma.group.findMany({
+      where,
+      select: {
+        name: true,
+        description: true,
+        max_student: true,
+        start_date: true,
+        start_time: true,
+        week_day: true,
+        courses: { select: { name: true } },
+        rooms: { select: { name: true } },
+
+        studentGroups: {
+          select: {
+            students: {
+              select: { first_name: true, last_name: true },
+            },
+          },
+        },
+        _count: { select: { studentGroups: true } },
+      },
+    });
+    return {
+      success: true,
+      message: 'My Groups',
+      data: groups,
+    };
+  }
+
+  async updateTeacher(id:number, payload: UpdateTeacherDto) {
     const findId = this.prisma.teacher.findUnique({
       where: { id: Number(id) },
     });
@@ -83,17 +143,23 @@ export class TeachersService {
     };
   }
 
-  async deleteTeacher(id) {
-    const findId = this.prisma.teacher.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!findId) {
-      throw new NotFoundException();
-    }
-    await this.prisma.teacher.delete({ where: { id } });
-    return {
-      success: true,
-      message: 'Teacher delete',
-    };
+  async deleteTeacher(id : number) {
+    const findId = await this.prisma.teacher.findUnique({ where: { id: Number(id) } });
+        if (!findId) {
+          throw new NotFoundException();
+        }
+    
+        if(findId.status === Status.inactive){
+          throw new BadRequestException("User already deleted")
+        }
+        const data = await this.prisma.teacher.update({
+           where: { id:Number(id) },
+           data:{status:Status.inactive}
+           });
+        return {
+          success: true,
+          message: 'Teacher delete',
+          data,
+        };
   }
 }

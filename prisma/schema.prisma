@@ -45,6 +45,7 @@ enum Status {
 enum GroupStatus {
   planned
   active
+  inactive
   completed
 }
 

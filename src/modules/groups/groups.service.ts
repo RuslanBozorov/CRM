@@ -6,21 +6,22 @@ import {
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreateGroupDto } from './dto/create.dto';
 import { UpdateGroupDto } from './dto/update.dto';
-import { Status } from '@prisma/client';
+import { GroupStatus, Status } from '@prisma/client';
 import { filterDto } from './dto/search.dto';
 
 @Injectable()
 export class GroupsService {
   constructor(private prisma: PrismaService) {}
 
-  async getAllGroups(query : filterDto) {
-    const {groupName} = query
+  async getAllGroups(query: filterDto) {
+    const { groupName, max_student } = query;
     let where = {
-        status:Status.active,
-        name:groupName
-    }
-    if(groupName){
-        where["name"] = groupName
+      status: Status.active,
+      name: groupName,
+      max_student: max_student ? parseInt(max_student) : undefined,
+    };
+    if (groupName) {
+      where['name'] = groupName;
     }
     const allGroup = await this.prisma.group.findMany({
       where,
@@ -144,6 +145,21 @@ export class GroupsService {
       data: dataFormatter,
     };
   }
+
+
+  async getDeleteArxiv(){
+    const data = await this.prisma.group.findMany({
+      where:{
+        status:GroupStatus.inactive
+      }
+    })
+    return{
+      success:true,
+      message:"Deleted groups arxiv",
+      data:data
+    }
+  }
+
 
   async createGroup(payload: CreateGroupDto) {
     const timeToMinutes = (time: string) => {
@@ -303,18 +319,25 @@ export class GroupsService {
   async deleteGroup(groupId: number) {
     const existGroup = await this.prisma.group.findUnique({
       where: { id: groupId },
+      select:{id:true,status:true}
     });
     if (!existGroup) {
       throw new NotFoundException('Group not found with id');
     }
 
-    await this.prisma.studentGroup.deleteMany({
-      where: { group_id: groupId },
+    await this.prisma.group.update({
+      where: { id: groupId },
+      data:{status:GroupStatus.inactive}
     });
 
-    await this.prisma.group.delete({
-      where: { id: groupId },
+    await this.prisma.studentGroup.updateMany({
+      where: { id:groupId },
+      data:{
+        status:GroupStatus.inactive
+      }
     });
+
+    
 
     return {
       success: true,

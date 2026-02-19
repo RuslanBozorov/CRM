@@ -39,6 +39,17 @@ export class UsersController {
   oneUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.oneUser(id);
   }
+
+  @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get("delete-arxiv")
+  getDeleteArxiv(){
+    return this.userService.getDeleteArxiv()
+  }
+
   @ApiOperation({
     summary: `${Role.SUPERADMIN}  ${Role.ADMIN}`,
   })

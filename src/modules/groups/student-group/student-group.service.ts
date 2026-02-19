@@ -63,6 +63,20 @@ export class StudentGroupService {
     };
   }
 
+
+  async getDeleteArxiv(){
+    const data = await this.prisma.studentGroup.findMany({
+      where:{
+        status:Status.inactive
+      }
+    })
+    return{
+      success:true,
+      message:"Deleted groups arxiv",
+      data:data
+    }
+  }
+
   async createStudentGroup(payload: CreateStudentGroupDto) {
     const existStudent = await this.prisma.student.findFirst({
       where: {

@@ -42,6 +42,17 @@ export class RoomsController {
     return this.roomService.getOneRoom(id);
   }
 
+   @ApiOperation({
+    summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Get("delete-arxiv")
+  getDeleteArxiv(){
+    return this.roomService.getDeleteArxiv()
+  }
+
+
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
