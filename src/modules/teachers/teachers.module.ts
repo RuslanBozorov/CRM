@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { EmailModule } from 'src/common/email/email.module';
 
 @Module({
+  // ================= Run Prettier to format the code =================
   imports: [AuthModule, EmailModule],
   controllers: [TeachersController],
   providers: [TeachersService],

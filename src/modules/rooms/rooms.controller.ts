@@ -20,6 +20,7 @@ import { UpdateRoomDto } from './dto/update.tdo';
 @ApiBearerAuth()
 @Controller('rooms')
 export class RoomsController {
+  // ================= Run Prettier to format the code =================
   constructor(private readonly roomService: RoomsService) {}
 
   @ApiOperation({

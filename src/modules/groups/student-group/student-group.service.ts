@@ -11,6 +11,7 @@ import { Status } from '@prisma/client';
 
 @Injectable()
 export class StudentGroupService {
+  // ================= Run Prettier to format the code =================
   constructor(private prisma: PrismaService) {}
 
   async getAllStudentGroup() {

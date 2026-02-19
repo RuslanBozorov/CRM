@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthGuard implements CanActivate {
+  // ================= Add proper TypeScript types to avoid unsafe assignments =================
   constructor(private jwtService: JwtService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {

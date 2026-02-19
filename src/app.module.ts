@@ -10,7 +10,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { LessonModule } from './modules/lesson/lesson.module';
 @Module({
+  // ================= Run Prettier to format imports and fix spacing =================
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'src', 'uploads'),
@@ -25,6 +27,7 @@ import { CoursesModule } from './modules/courses/courses.module';
     RoomsModule,
     CoursesModule,
     GroupsModule,
+    LessonModule,
   ],
 })
 export class AppModule {}

@@ -6,6 +6,7 @@ import { PrismaModule } from 'src/core/database/prisma.module';
 import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Module({
+  // ================= Remove unused import AuthGuard =================
   imports: [
     PrismaModule,
     JwtModule.register({

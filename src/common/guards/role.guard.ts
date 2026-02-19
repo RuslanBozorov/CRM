@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 @Injectable()
 export class RolesGuard implements CanActivate {
+  // ================= Add proper TypeScript types and fix spelling: reflactor -> reflector =================
   constructor(private reflactor: Reflector) {}
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflactor.get('roles', context.getHandler());

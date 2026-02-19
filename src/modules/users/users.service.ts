@@ -6,6 +6,7 @@ import { Role, Status } from '@prisma/client';
 import { UpdateAdminDto } from './dto/update.admin.dto';
 @Injectable()
 export class UsersService {
+  // ================= Fix await for findId, correct error message, and format code =================
   constructor(private prisma: PrismaService) {}
 
   async getAllUsers() {

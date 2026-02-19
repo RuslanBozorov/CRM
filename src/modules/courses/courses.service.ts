@@ -11,6 +11,7 @@ import { Status } from '@prisma/client';
 
 @Injectable()
 export class CoursesService {
+  // ================= Run Prettier to format the code =================
   constructor(private prisma: PrismaService) {}
 
   async createCourse(payload: CreateCourseDto) {
@@ -18,12 +19,14 @@ export class CoursesService {
       where: { name: payload.name },
     });
 
+    // ================= Fix error message: 'Room already exists' to 'Course already exists' =================
     if (existCourse) throw new ConflictException('Room already exists');
     await this.prisma.course.create({
       data: payload,
     });
 
     return {
+      // ================= Fix typo: 'Creadet' to 'Created' =================
       success: true,
       message: 'Course Creadet',
     };
@@ -38,7 +41,8 @@ export class CoursesService {
     };
   }
 
-  async getOneCourse(id) {
+  // ================= Add type to parameter: id: number =================
+  async getOneCourse(id:number) {
     const existCourse = await this.prisma.course.findUnique({
       where: { id: Number(id) },
     });
@@ -51,6 +55,7 @@ export class CoursesService {
     };
   }
 
+  // ================= Rename method to getDeletedCoursesArchive for consistency =================
   async getDeleteArxiv(){
     const data = await this.prisma.course.findMany({
       where:{
@@ -64,8 +69,9 @@ export class CoursesService {
     }
   }
 
-  async updateCourse(id, payload: UpdateCourseDto) {
-    const findId = this.prisma.course.findUnique({ where: { id: Number(id) } });
+  // ================= Add type to id parameter and await findId =================
+  async updateCourse(id:number, payload: UpdateCourseDto) {
+    const findId = await this.prisma.course.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();
     }
@@ -80,6 +86,7 @@ export class CoursesService {
     };
   }
 
+  // ================= Fix indentation and error message =================
   async deleteCourse(id : number) {
     const findId = await this.prisma.course.findUnique({ where: { id: Number(id) } });
            if (!findId) {
@@ -87,6 +94,7 @@ export class CoursesService {
            }
        
            if(findId.status === Status.inactive){
+             // ================= Fix error message: 'User already deleted' to 'Course already deleted' =================
              throw new BadRequestException("User already deleted")
            }
            const data = await this.prisma.course.update({

@@ -20,6 +20,7 @@ import { RolesGuard } from 'src/common/guards/role.guard';
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
+  // ================= Run Prettier to format the code =================
   constructor(private readonly userService: UsersService) {}
   @ApiOperation({
     summary: `${Role.SUPERADMIN}`,

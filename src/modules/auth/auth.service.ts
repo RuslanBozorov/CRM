@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Role } from '@prisma/client';
 @Injectable()
 export class AuthService {
+  // ================= Extract common login logic to reduce duplication =================
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
@@ -27,6 +28,7 @@ export class AuthService {
     }
 
     return {
+      // ================= Fix typo: 'successfuled' to 'successful' =================
       success: true,
       message: 'Login successfuled',
       accessToken: this.jwtService.sign({
@@ -53,6 +55,7 @@ export class AuthService {
     }
 
     return {
+      // ================= Fix typo: 'successfuled' to 'successful' =================
       success: true,
       message: 'Login successfuled',
       accessToken: this.jwtService.sign({
@@ -79,6 +82,7 @@ export class AuthService {
     }
 
     return {
+      // ================= Fix typo: 'successfuled' to 'successful' =================
       success: true,
       message: 'Login successfuled',
       accessToken: this.jwtService.sign({

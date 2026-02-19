@@ -11,6 +11,7 @@ import { filterDto } from './dto/search.dto';
 
 @Injectable()
 export class GroupsService {
+  // ================= Run Prettier to format the code =================
   constructor(private prisma: PrismaService) {}
 
   async getAllGroups(query: filterDto) {

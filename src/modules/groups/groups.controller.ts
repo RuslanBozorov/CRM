@@ -22,6 +22,7 @@ import { filterDto } from './dto/search.dto';
 @ApiBearerAuth()
 @Controller('groups')
 export class GroupsController {
+  // ================= Run Prettier to format the code =================
   constructor(private readonly groupService: GroupsService) {}
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,

@@ -11,6 +11,7 @@ import { Status } from '@prisma/client';
 
 @Injectable()
 export class RoomsService {
+  // ================= Fix typo: 'Creadet' to 'Created' and run Prettier =================
   constructor(private prisma: PrismaService) {}
 
   async createRoom(payload: CreateRoomDto) {

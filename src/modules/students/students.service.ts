@@ -12,6 +12,7 @@ import { EmailService } from 'src/common/email/email.service';
 import { Status, StudentStatus } from '@prisma/client';
 @Injectable()
 export class StudentsService {
+  // ================= Run Prettier to format the code =================
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,

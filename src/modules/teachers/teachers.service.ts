@@ -12,6 +12,7 @@ import { UpdateTeacherDto } from './dto/update.teacher.dto';
 import { EmailService } from 'src/common/email/email.service';
 @Injectable()
 export class TeachersService {
+  // ================= Fix logic: check teacher instead of student, and format code =================
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,

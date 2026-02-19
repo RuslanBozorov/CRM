@@ -20,6 +20,7 @@ import { UpdateCourseDto } from './dto/update.dto';
 @ApiBearerAuth()
 @Controller('courses')
 export class CoursesController {
+  // ================= Run Prettier to fix formatting issues =================
   constructor(private readonly courseService: CoursesService) {}
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,

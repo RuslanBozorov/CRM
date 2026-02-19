@@ -20,6 +20,7 @@ import { RolesGuard } from 'src/common/guards/role.guard';
 @ApiBearerAuth()
 @Controller('student-group')
 export class StudentGroupController {
+  // ================= Run Prettier to format the code =================
   constructor(private readonly studentGroupService: StudentGroupService) {}
 
   @ApiOperation({
