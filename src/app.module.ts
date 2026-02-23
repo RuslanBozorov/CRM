@@ -12,6 +12,7 @@ import { RoomsModule } from './modules/rooms/rooms.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { LessonModule } from './modules/lesson/lesson.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
+import { HomeworkModule } from './modules/homework/homework.module';
 @Module({
   // ================= Run Prettier to format imports and fix spacing =================
   imports: [
@@ -30,6 +31,7 @@ import { AttendanceModule } from './modules/attendance/attendance.module';
     GroupsModule,
     LessonModule,
     AttendanceModule,
+    HomeworkModule,
   ],
 })
 export class AppModule {}

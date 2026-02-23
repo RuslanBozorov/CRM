@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber } from "class-validator";
+import { IsBoolean, IsNumber } from "class-validator";
 
 export class CreateAttendanceDto{
     @ApiProperty()
@@ -12,6 +12,6 @@ export class CreateAttendanceDto{
     student_id:number
 
     @ApiProperty()
-    @IsNumber()
+    @IsBoolean()
     isPresent: boolean
 }
