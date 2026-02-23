@@ -60,7 +60,7 @@ export class UsersService {
     };
   }
 
-  async updateUser(id, payload: UpdateAdminDto) {
+  async updateUser(id:number, payload: UpdateAdminDto) {
     const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();

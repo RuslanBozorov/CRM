@@ -38,7 +38,7 @@ export class TeachersController {
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  @Get('student/all')
+  @Get('all')
   getAllStudent() {
     return this.teacherService.getAllTeacher();
   }
