@@ -14,6 +14,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
+     "migrate:deploy": "npx prisma migrate deploy",
+    "seed": "node dist/seed.js",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main.js",
     "render-build": "npm ci --include=dev && npm run build && npx prisma migrate deploy",
