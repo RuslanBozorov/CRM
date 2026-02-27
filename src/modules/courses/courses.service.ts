@@ -12,7 +12,7 @@ import { Status } from '@prisma/client';
 @Injectable()
 export class CoursesService {
   // ================= Run Prettier to format the code =================
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async createCourse(payload: CreateCourseDto) {
     const existCourse = await this.prisma.course.findUnique({
@@ -20,29 +20,23 @@ export class CoursesService {
     });
 
     // ================= Fix error message: 'Room already exists' to 'Course already exists' =================
-    if (existCourse) throw new ConflictException('Room already exists');
+    if (existCourse) throw new ConflictException('Course already exists');
     await this.prisma.course.create({
       data: payload,
     });
 
     return {
-      // ================= Fix typo: 'Creadet' to 'Created' =================
       success: true,
-      message: 'Course Creadet',
+      message: 'Course Created',
     };
   }
 
   async getAllCourse() {
-    const data = await this.prisma.course.findMany();
-    return {
-      success: true,
-      message: 'All Course',
-      data: data,
-    };
+    return this.prisma.course.findMany();
   }
 
   // ================= Add type to parameter: id: number =================
-  async getOneCourse(id:number) {
+  async getOneCourse(id: number) {
     const existCourse = await this.prisma.course.findUnique({
       where: { id: Number(id) },
     });
@@ -56,21 +50,21 @@ export class CoursesService {
   }
 
   // ================= Rename method to getDeletedCoursesArchive for consistency =================
-  async getDeleteArxiv(){
+  async getDeleteArxiv() {
     const data = await this.prisma.course.findMany({
-      where:{
-        status:Status.inactive
+      where: {
+        status: Status.inactive
       }
     })
-    return{
-      success:true,
-      message:"Deleted courses arxiv",
-      data:data
+    return {
+      success: true,
+      message: "Deleted courses arxiv",
+      data: data
     }
   }
 
   // ================= Add type to id parameter and await findId =================
-  async updateCourse(id:number, payload: UpdateCourseDto) {
+  async updateCourse(id: number, payload: UpdateCourseDto) {
     const findId = await this.prisma.course.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();
@@ -87,24 +81,24 @@ export class CoursesService {
   }
 
   // ================= Fix indentation and error message =================
-  async deleteCourse(id : number) {
+  async deleteCourse(id: number) {
     const findId = await this.prisma.course.findUnique({ where: { id: Number(id) } });
-           if (!findId) {
-             throw new NotFoundException();
-           }
-       
-           if(findId.status === Status.inactive){
-             // ================= Fix error message: 'User already deleted' to 'Course already deleted' =================
-             throw new BadRequestException("User already deleted")
-           }
-           const data = await this.prisma.course.update({
-              where: { id:Number(id) },
-              data:{status:Status.inactive}
-              });
-           return {
-             success: true,
-             message: 'Course delete',
-             data,
-           };
+    if (!findId) {
+      throw new NotFoundException();
+    }
+
+    if (findId.status === Status.inactive) {
+      // ================= Fix error message: 'User already deleted' to 'Course already deleted' =================
+      throw new BadRequestException("User already deleted")
+    }
+    const data = await this.prisma.course.update({
+      where: { id: Number(id) },
+      data: { status: Status.inactive }
+    });
+    return {
+      success: true,
+      message: 'Course delete',
+      data,
+    };
   }
 }

@@ -10,13 +10,14 @@ import * as bcrypt from 'bcrypt';
 import { UpdateStudentDto } from './dto/update.student.dto';
 import { EmailService } from 'src/common/email/email.service';
 import { Status, StudentStatus } from '@prisma/client';
+import { PaginationDto } from './dto/query.dto';
 @Injectable()
 export class StudentsService {
   // ================= Run Prettier to format the code =================
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
-  ) {}
+  ) { }
 
   async createStudent(payload: CreateStudentDto, filename: string) {
     const existUser = await this.prisma.student.findFirst({
@@ -54,16 +55,40 @@ export class StudentsService {
     };
   }
 
-  async getAllStudets() {
-    const data = await this.prisma.student.findMany();
-    return {
-      success: true,
-      message: 'All Students',
-      data,
-    };
+  async getAllStudents(pagenation : PaginationDto) {
+    const {page=1, limit=10,search} = pagenation
+    const students = await this.prisma.student.findMany({
+      where:{
+        status:Status.active,
+        ...(search && {
+          first_name: {
+            contains:search,
+            mode:'insensitive'
+          }
+        })
+      
+       
+      },
+      select:{
+        id:true,
+        first_name:true,
+        last_name:true,
+        phone:true,
+        email:true,
+        address:true,
+        birth_date:true
+      },
+      skip:(page - 1) * limit,
+      take:limit ? +limit : 10 
+    })
+
+    return{
+      success:true,
+      data:students
+    }
   }
 
-  async getOneStudent(id : number) {
+  async getOneStudent(id: number) {
     const existStudent = await this.prisma.student.findUnique({
       where: { id: Number(id) },
     });
@@ -77,22 +102,22 @@ export class StudentsService {
   }
 
 
-   async getDeleteArxiv(){
-      const data = await this.prisma.student.findMany({
-        where:{
-          status:StudentStatus.inactive
-        }
-      })
-      return{
-        success:true,
-        message:"Deleted groups arxiv",
-        data:data
+  async getDeleteArxiv() {
+    const data = await this.prisma.student.findMany({
+      where: {
+        status: StudentStatus.inactive
       }
+    })
+    return {
+      success: true,
+      message: "Deleted student arxiv",
+      data: data
     }
+  }
 
 
-  async updateStudent(id : number, payload: UpdateStudentDto) {
-    const findId = this.prisma.student.findUnique({
+  async updateStudent(id: number, payload: UpdateStudentDto) {
+    const findId = await this.prisma.student.findUnique({
       where: { id: Number(id) },
     });
     if (!findId) {
@@ -109,23 +134,68 @@ export class StudentsService {
     };
   }
 
-  async deleteStudent(id : number) {
+  async deleteStudent(id: number) {
     const findId = await this.prisma.student.findUnique({ where: { id: Number(id) } });
-        if (!findId) {
-          throw new NotFoundException();
-        }
-    
-        if(findId.status === Status.inactive){
-          throw new BadRequestException("User already deleted")
-        }
-        const data = await this.prisma.student.update({
-           where: { id:Number(id) },
-           data:{status:StudentStatus.inactive}
-           });
-        return {
-          success: true,
-          message: 'Student delete',
-          data,
-        };
+    if (!findId) {
+      throw new NotFoundException();
+    }
+
+    if (findId.status === Status.inactive) {
+      throw new BadRequestException("User already deleted")
+    }
+    const data = await this.prisma.student.update({
+      where: { id: Number(id) },
+      data: { status: StudentStatus.inactive }
+    });
+    return {
+      success: true,
+      message: 'Student delete',
+      data,
+    };
+  }
+
+  async getMyGroups(userId: number) {
+    const studentGroups = await this.prisma.studentGroup.findMany({
+      where: {
+        student_id: userId,
+        status: Status.active,
+        groups: {
+          status: 'active' as any,
+        },
+      },
+      select: {
+        groups: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            start_date: true,
+            start_time: true,
+            week_day: true,
+            courses: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            teachers: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+              },
+            },
+            rooms: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return studentGroups.map((sg) => sg.groups);
   }
 }

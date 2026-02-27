@@ -31,7 +31,7 @@ import { UpdateTeacherDto } from './dto/update.teacher.dto';
 @ApiBearerAuth()
 @Controller('teachers')
 export class TeachersController {
-  constructor(private readonly teacherService: TeachersService) {}
+  constructor(private readonly teacherService: TeachersService) { }
 
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
@@ -39,7 +39,7 @@ export class TeachersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get('all')
-  getAllStudent() {
+  getAllTeachers() {
     return this.teacherService.getAllTeacher();
   }
 
@@ -53,13 +53,13 @@ export class TeachersController {
     return this.teacherService.getOneTeacher(id);
   }
 
-   @ApiOperation({
+  @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get("delete-arxiv")
-  getDeleteArxiv(){
+  getDeleteArxiv() {
     return this.teacherService.getDeleteArxiv()
   }
 
@@ -105,11 +105,11 @@ export class TeachersController {
       }),
     }),
   )
-  createStudent(
+  createTeacher(
     @Body() payload: CreateTeacherDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.teacherService.createTeacher(payload, file.filename);
+    return this.teacherService.createTeacher(payload, file?.filename);
   }
 
   @ApiOperation({

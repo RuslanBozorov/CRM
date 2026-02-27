@@ -21,10 +21,10 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
-  
+  app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
   console.log(`http://localhost:3000/swagger`);
-  
+
 }
 // ================= Await the bootstrap function or handle the promise =================
 bootstrap();

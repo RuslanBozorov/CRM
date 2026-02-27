@@ -10,7 +10,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async userLogin(payload: LoginDto) {
     const existUser = await this.prisma.user.findUnique({
@@ -28,14 +28,19 @@ export class AuthService {
     }
 
     return {
-      // ================= Fix typo: 'successfuled' to 'successful' =================
       success: true,
-      message: 'Login successfuled',
+      message: 'Login successful',
       accessToken: this.jwtService.sign({
         id: existUser.id,
         email: existUser.email,
         role: existUser.role,
       }),
+      user: {
+        first_name: existUser.first_name,
+        last_name: existUser.last_name,
+        role: existUser.role,
+        phone: existUser.phone,
+      }
     };
   }
 
@@ -55,14 +60,19 @@ export class AuthService {
     }
 
     return {
-      // ================= Fix typo: 'successfuled' to 'successful' =================
       success: true,
-      message: 'Login successfuled',
+      message: 'Login successful',
       accessToken: this.jwtService.sign({
         id: existUser.id,
         email: existUser.email,
         role: Role.TEACHER,
       }),
+      user: {
+        first_name: existUser.first_name,
+        last_name: existUser.last_name,
+        role: Role.TEACHER,
+        phone: existUser.phone,
+      }
     };
   }
 
@@ -82,14 +92,19 @@ export class AuthService {
     }
 
     return {
-      // ================= Fix typo: 'successfuled' to 'successful' =================
       success: true,
-      message: 'Login successfuled',
+      message: 'Login successful',
       accessToken: this.jwtService.sign({
         id: existUser.id,
         email: existUser.email,
         role: Role.STUDENT,
       }),
+      user: {
+        first_name: existUser.first_name,
+        last_name: existUser.last_name,
+        role: Role.STUDENT,
+        phone: existUser.phone,
+      }
     };
   }
 }

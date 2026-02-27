@@ -7,33 +7,38 @@ import { UpdateAdminDto } from './dto/update.admin.dto';
 @Injectable()
 export class UsersService {
   // ================= Fix await for findId, correct error message, and format code =================
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getAllUsers() {
-    return this.prisma.user.findMany({ where: { status: Status.active, role: Role.ADMIN } });
+    return this.prisma.user.findMany({
+      where: {
+        status: Status.active,
+        role: { in: [Role.ADMIN, Role.SUPERADMIN] }
+      }
+    });
   }
 
-  async oneUser(id : number) {
-    const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
+  async oneUser(id: number) {
+    const findId = await this.prisma.user.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException('User Not found');
     }
-    return this.prisma.user.findUnique({ where: { id: Number(id) } });
+    return findId;
   }
 
-   async getDeleteArxiv(){
-        const data = await this.prisma.user.findMany({
-          where:{
-            status:Status.inactive
-          }
-        })
-        return{
-          success:true,
-          message:"Deleted groups arxiv",
-          data:data
-        }
+  async getDeleteArxiv() {
+    const data = await this.prisma.user.findMany({
+      where: {
+        status: Status.inactive
       }
-  
+    })
+    return {
+      success: true,
+      message: "Deleted groups arxiv",
+      data: data
+    }
+  }
+
 
   async createAdmin(payload: CreateAdminDto) {
     const adminExists = await this.prisma.user.findFirst({
@@ -56,12 +61,12 @@ export class UsersService {
 
     return {
       success: true,
-      message: 'Create Admin successfuley',
+      message: 'Create Admin successfully',
     };
   }
 
-  async updateUser(id:number, payload: UpdateAdminDto) {
-    const findId = this.prisma.user.findUnique({ where: { id: Number(id) } });
+  async updateUser(id: number, payload: UpdateAdminDto) {
+    const findId = await this.prisma.user.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();
     }
@@ -73,19 +78,19 @@ export class UsersService {
     };
   }
 
-  async deleteUser(id : number) {
+  async deleteUser(id: number) {
     const findId = await this.prisma.user.findUnique({ where: { id: Number(id) } });
     if (!findId) {
       throw new NotFoundException();
     }
 
-    if(findId.status === Status.inactive){
+    if (findId.status === Status.inactive) {
       throw new BadRequestException("User already deleted")
     }
     const data = await this.prisma.user.update({
-       where: { id:Number(id) },
-       data:{status:Status.inactive}
-       });
+      where: { id: Number(id) },
+      data: { status: Status.inactive }
+    });
     return {
       success: true,
       message: 'User delete',

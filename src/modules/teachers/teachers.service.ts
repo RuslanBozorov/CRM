@@ -16,9 +16,9 @@ export class TeachersService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
-  ) {}
+  ) { }
   async createTeacher(payload: CreateTeacherDto, filename: string) {
-    const existUser = await this.prisma.student.findFirst({
+    const existUser = await this.prisma.teacher.findFirst({
       where: {
         OR: [{ phone: payload.phone }, { email: payload.email }],
       },
@@ -51,36 +51,31 @@ export class TeachersService {
   }
 
   async getAllTeacher() {
-    const teacher = await this.prisma.teacher.findMany();
-    return {
-      success: true,
-      message: 'All Teachers',
-      data: teacher,
-    };
+    return this.prisma.teacher.findMany();
   }
 
-  async getOneTeacher(id : number) {
-    const existStudent = await this.prisma.teacher.findUnique({where:{id:Number(id)}});
-    if (!existStudent) throw new NotFoundException();
-    await this.prisma.teacher.findUnique({where:{id:Number(id)}});
+  async getOneTeacher(id: number) {
+    const existTeacher = await this.prisma.teacher.findUnique({ where: { id: Number(id) } });
+    if (!existTeacher) throw new NotFoundException();
     return {
       success: true,
       message: 'Get one Teacher',
+      data: existTeacher,
     };
   }
 
-  async getDeleteArxiv(){
-        const data = await this.prisma.teacher.findMany({
-          where:{
-            status:Status.inactive
-          }
-        })
-        return{
-          success:true,
-          message:"Deleted groups arxiv",
-          data:data
-        }
+  async getDeleteArxiv() {
+    const data = await this.prisma.teacher.findMany({
+      where: {
+        status: Status.inactive
       }
+    })
+    return {
+      success: true,
+      message: "Deleted groups arxiv",
+      data: data
+    }
+  }
 
   async getMyGroups(user: { id: number; role: Role }) {
     const where: any = {
@@ -127,40 +122,41 @@ export class TeachersService {
     };
   }
 
-  async updateTeacher(id:number, payload: UpdateTeacherDto) {
-    const findId = this.prisma.teacher.findUnique({
+  async updateTeacher(id: number, payload: UpdateTeacherDto) {
+    const findId = await this.prisma.teacher.findUnique({
       where: { id: Number(id) },
     });
     if (!findId) {
       throw new NotFoundException();
     }
-    await this.prisma.teacher.update({
+    const data = await this.prisma.teacher.update({
       where: { id: Number(id) },
       data: payload,
     });
     return {
       success: true,
       message: 'Teacher Update',
+      data,
     };
   }
 
-  async deleteTeacher(id : number) {
+  async deleteTeacher(id: number) {
     const findId = await this.prisma.teacher.findUnique({ where: { id: Number(id) } });
-        if (!findId) {
-          throw new NotFoundException();
-        }
-    
-        if(findId.status === Status.inactive){
-          throw new BadRequestException("User already deleted")
-        }
-        const data = await this.prisma.teacher.update({
-           where: { id:Number(id) },
-           data:{status:Status.inactive}
-           });
-        return {
-          success: true,
-          message: 'Teacher delete',
-          data,
-        };
+    if (!findId) {
+      throw new NotFoundException();
+    }
+
+    if (findId.status === Status.inactive) {
+      throw new BadRequestException("User already deleted")
+    }
+    const data = await this.prisma.teacher.update({
+      where: { id: Number(id) },
+      data: { status: Status.inactive }
+    });
+    return {
+      success: true,
+      message: 'Teacher delete',
+      data,
+    };
   }
 }

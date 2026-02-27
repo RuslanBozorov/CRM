@@ -12,7 +12,7 @@ import { filterDto } from './dto/search.dto';
 @Injectable()
 export class GroupsService {
   // ================= Run Prettier to format the code =================
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getAllGroups(query: filterDto) {
     const { groupName, max_student } = query;
@@ -54,11 +54,7 @@ export class GroupsService {
         },
       },
     });
-    return {
-      success: true,
-      message: 'All groups',
-      data: allGroup,
-    };
+    return allGroup;
   }
 
   async getOneGroup(groupId: number) {
@@ -148,16 +144,16 @@ export class GroupsService {
   }
 
 
-  async getDeleteArxiv(){
+  async getDeleteArxiv() {
     const data = await this.prisma.group.findMany({
-      where:{
-        status:GroupStatus.inactive
+      where: {
+        status: GroupStatus.inactive
       }
     })
-    return{
-      success:true,
-      message:"Deleted groups arxiv",
-      data:data
+    return {
+      success: true,
+      message: "Deleted groups arxiv",
+      data: data
     }
   }
 
@@ -320,7 +316,7 @@ export class GroupsService {
   async deleteGroup(groupId: number) {
     const existGroup = await this.prisma.group.findUnique({
       where: { id: groupId },
-      select:{id:true,status:true}
+      select: { id: true, status: true }
     });
     if (!existGroup) {
       throw new NotFoundException('Group not found with id');
@@ -328,17 +324,17 @@ export class GroupsService {
 
     await this.prisma.group.update({
       where: { id: groupId },
-      data:{status:GroupStatus.inactive}
+      data: { status: GroupStatus.inactive }
     });
 
     await this.prisma.studentGroup.updateMany({
-      where: { id:groupId },
-      data:{
-        status:GroupStatus.inactive
+      where: { group_id: groupId },
+      data: {
+        status: GroupStatus.inactive
       }
     });
 
-    
+
 
     return {
       success: true,

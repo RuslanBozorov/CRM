@@ -7,6 +7,8 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
+  Req,
   UnsupportedMediaTypeException,
   UploadedFile,
   UseGuards,
@@ -26,20 +28,20 @@ import {
 import { CreateStudentDto } from './dto/create.student.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { error } from 'console';
 import { UpdateStudentDto } from './dto/update.student.dto';
+import { PaginationDto } from './dto/query.dto';
 @ApiBearerAuth()
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentService: StudentsService) {}
+  constructor(private readonly studentService: StudentsService) { }
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.TEACHER)
   @Get('all')
-  getAllStudent() {
-    return this.studentService.getAllStudets();
+  getAllStudents(@Query() pagenation : PaginationDto) {
+    return this.studentService.getAllStudents(pagenation);
   }
 
   @ApiOperation({
@@ -53,13 +55,13 @@ export class StudentsController {
   }
 
 
-   @ApiOperation({
+  @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get("delete-arxiv")
-  getDeleteArxiv(){
+  getDeleteArxiv() {
     return this.studentService.getDeleteArxiv()
   }
 
@@ -139,5 +141,25 @@ export class StudentsController {
   @Delete('delete/:id')
   deleteStudent(@Param('id', ParseIntPipe) id: number) {
     return this.studentService.deleteStudent(id);
+  }
+
+  @ApiOperation({
+    summary: `${Role.STUDENT}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.STUDENT)
+  @Get('my-groups')
+  getMyGroups(@Req() req: any) {
+    return this.studentService.getMyGroups(req.user.id);
+  }
+
+  @ApiOperation({
+    summary: `${Role.STUDENT}`,
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.STUDENT)
+  @Get('my-profile')
+  getMyProfile(@Req() req: any) {
+    return this.studentService.getOneStudent(req.user.id);
   }
 }
