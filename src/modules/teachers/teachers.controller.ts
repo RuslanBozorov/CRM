@@ -27,11 +27,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { CreateTeacherDto } from './dto/create.teacher';
 import { UpdateTeacherDto } from './dto/update.teacher.dto';
+import { UPLOADS_DIR } from 'src/common/utils/storage-paths';
 
 @ApiBearerAuth()
 @Controller('teachers')
 export class TeachersController {
-  constructor(private readonly teacherService: TeachersService) { }
+  constructor(private readonly teacherService: TeachersService) {}
 
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
@@ -97,7 +98,7 @@ export class TeachersController {
   @UseInterceptors(
     FileInterceptor('photo', {
       storage: diskStorage({
-        destination: './src/uploads',
+        destination: UPLOADS_DIR,
         filename: (req, file, cb) => {
           const filename = Date.now() + '.' + file.mimetype.split('/')[1];
           cb(null, filename);

@@ -1,24 +1,30 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Global, Module } from '@nestjs/common';
-import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { EmailService } from './email.service';
+import { TEMPLATES_DIR } from '../utils/storage-paths';
+
 @Global()
 @Module({
   imports: [
     MailerModule.forRoot({
       transport: {
-        service: 'gmail',
+        host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_SECURE === 'true',
         auth: {
-          user: 'frontendruslan@gmail.com',
-          pass: 'fymbetmwgxnmpspw',
+          user: process.env.SMTP_USER ?? process.env.EMAIL,
+          pass: process.env.SMTP_PASS ?? process.env.PASS,
         },
       },
       defaults: {
-        from: 'Najottalim <frontendruslan@gmail.com>',
+        from:
+          process.env.MAIL_FROM ??
+          process.env.SMTP_USER ??
+          process.env.EMAIL,
       },
       template: {
-        dir: join(process.cwd(), 'src', 'templates'),
+        dir: TEMPLATES_DIR,
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UnsupportedMediaTypeException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { HomeworkService } from './homework.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -8,10 +17,11 @@ import { Role } from '@prisma/client';
 import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { Roles } from 'src/common/decorators/role';
+import { HOMEWORK_UPLOADS_DIR } from 'src/common/utils/storage-paths';
 @ApiBearerAuth()
 @Controller('homework')
 export class HomeworkController {
-  constructor(private readonly homeworkService: HomeworkService) { }
+  constructor(private readonly homeworkService: HomeworkService) {}
 
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN} ${Role.TEACHER}`,
@@ -20,7 +30,7 @@ export class HomeworkController {
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.TEACHER)
   @Get('all')
   getAllHomework() {
-    return this.homeworkService.getAllHomework()
+    return this.homeworkService.getAllHomework();
   }
 
 
@@ -32,14 +42,14 @@ export class HomeworkController {
         lesson_id: { type: 'number' },
         group_id: { type: 'number' },
         file: { type: 'string', format: 'binary' },
-        title: { type: 'string' }
+        title: { type: 'string' },
       },
     },
   })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './src/uploads/files',
+        destination: HOMEWORK_UPLOADS_DIR,
         filename: (req, file, cb) => {
           const filename = Date.now() + '.' + file.mimetype.split('/')[1];
           cb(null, filename);
@@ -54,6 +64,6 @@ export class HomeworkController {
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.TEACHER)
   @Post()
   createHomework(@Req() req: Request, @Body() payload: CreateHomewrokDto, @UploadedFile() file?: Express.Multer.File) {
-    return this.homeworkService.createHomework(payload, req['user'], file?.filename)
+    return this.homeworkService.createHomework(payload, req['user'], file?.filename);
   }
 }

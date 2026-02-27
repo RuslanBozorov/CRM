@@ -30,17 +30,19 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UpdateStudentDto } from './dto/update.student.dto';
 import { PaginationDto } from './dto/query.dto';
+import { UPLOADS_DIR } from 'src/common/utils/storage-paths';
+
 @ApiBearerAuth()
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentService: StudentsService) { }
+  constructor(private readonly studentService: StudentsService) {}
   @ApiOperation({
     summary: `${Role.SUPERADMIN} ${Role.ADMIN}`,
   })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.TEACHER)
   @Get('all')
-  getAllStudents(@Query() pagenation : PaginationDto) {
+  getAllStudents(@Query() pagenation: PaginationDto) {
     return this.studentService.getAllStudents(pagenation);
   }
 
@@ -62,7 +64,7 @@ export class StudentsController {
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get("delete-arxiv")
   getDeleteArxiv() {
-    return this.studentService.getDeleteArxiv()
+    return this.studentService.getDeleteArxiv();
   }
 
 
@@ -91,7 +93,7 @@ export class StudentsController {
   @UseInterceptors(
     FileInterceptor('photo', {
       storage: diskStorage({
-        destination: './src/uploads',
+        destination: UPLOADS_DIR,
         filename: (req, file, cb) => {
           const filename = Date.now() + '.' + file.mimetype.split('/')[1];
           cb(null, filename);
