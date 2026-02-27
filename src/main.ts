@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApiBasicAuth, DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ensureStorageDirs } from './common/utils/storage-paths';
+import expressBasicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   ensureStorageDirs();
@@ -13,6 +14,18 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  
+  app.use(
+    ['/api/v1/swagger','/api/v1/swagger-json'],
+    expressBasicAuth({
+      challenge:true,
+      users:{
+        admin:"shaftoli"
+      }
+    })
+  )
+  
+
   app.setGlobalPrefix('api/v1');
   const config = new DocumentBuilder()
     .setTitle('CRM_COURSE')
