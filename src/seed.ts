@@ -1,21 +1,14 @@
-import 'dotenv/config';
 import { PrismaClient, Role, Status } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
+// dotenv bu yerda shart emas, chunki Render environment variable-larni avtomat beradi
 const prisma = new PrismaClient();
 
 async function main() {
   const email = process.env.SUPERADMIN_EMAIL || 'superadmin@gmail.com';
   const password = process.env.SUPERADMIN_PASSWORD || 'SuperAdmin123';
 
-  // Warn if using default credentials in production
-  if (process.env.NODE_ENV === 'production') {
-    if (!process.env.SUPERADMIN_EMAIL || !process.env.SUPERADMIN_PASSWORD) {
-      throw new Error(
-        '🚨 SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD must be set in production!'
-      );
-    }
-  }
+  console.log('🌱 Seeding started...');
 
   const hash = await bcrypt.hash(password, 10);
 
@@ -31,14 +24,14 @@ async function main() {
       last_name: 'Admin',
       email,
       password: hash,
-      role:Role.SUPERADMIN,
+      role: Role.SUPERADMIN,
       status: Status.active,
-      phone:"885157525",
-      address:'Toshkent'
+      phone: "885157525",
+      address: 'Toshkent'
     },
   });
 
-  console.log(`✅ Superadmin ready: ${superadmin.email} (ID: ${superadmin.id})`);
+  console.log(`✅ Superadmin ready: ${superadmin.email}`);
 }
 
 main()
