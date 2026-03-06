@@ -8,10 +8,6 @@
       {
         "include": "templates/**/*",
         "outDir": "dist"
-      },
-      {
-        "include": "src/seed.ts",
-        "outDir": "dist"
       }
     ]
   },
