@@ -5,7 +5,7 @@ services:
     plan: free
     autoDeploy: true
     healthCheckPath: /swagger
-    buildCommand: npm run render-build
+    buildCommand: npm run render-build && npm run seed
     startCommand: npm run start:prod
     envVars:
       - key: NODE_VERSION
