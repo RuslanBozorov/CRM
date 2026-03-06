@@ -5,8 +5,8 @@ services:
     plan: free
     autoDeploy: true
     healthCheckPath: /swagger
-    buildCommand: npm run render-build && npm run seed
-    startCommand: npm run start:prod
+    buildCommand: npm ci --include=dev && npm run build && npx prisma migrate deploy && npm run seed
+    startCommand: node dist/src/main.js
     envVars:
       - key: NODE_VERSION
         value: 22.11.0

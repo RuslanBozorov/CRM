@@ -15,9 +15,11 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "migrate:deploy": "npx prisma migrate deploy",
-    "seed": "node dist/src/seed.js",
+    "seed": "node dist/seed.js",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main.js",
+    "db:push": "npx prisma db push",
+    "prisma:seed": "node dist/seed.js",
     "render-build": "npm ci --include=dev && npm run build && npx prisma migrate deploy",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -91,5 +93,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "node dist/seed.js"
   }
 }
